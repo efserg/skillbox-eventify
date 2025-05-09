@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: eventify
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eventify_db?currentSchema=eventify
+    username: postgres
+    password: postgres
+
+  liquibase:
+    enabled: true
+    default-schema: eventify
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQL81Dialect

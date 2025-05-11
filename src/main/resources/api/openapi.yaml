@@ -1,0 +1,695 @@
+openapi: 3.0.3
+info:
+  title: Event Ticket Booking API
+  version: 3.0.0
+  description: Полная спецификация API для бронирования билетов
+  contact:
+    email: support@booking.com
+
+servers:
+  - url: http://localhost:8080/api
+    description: Локальный сервер
+  - url: https://api.booking.com/v1
+    description: Продакшен сервер
+
+tags:
+  - name: Auth
+    description: Аутентификация и регистрация
+  - name: Events
+    description: Управление мероприятиями
+  - name: Bookings
+    description: Операции с бронированиями
+  - name: Admin
+    description: Административные функции
+  - name: User
+    description: Настройки уведомлений пользователя
+
+paths:
+  # ====================== АУТЕНТИФИКАЦИЯ ======================
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Пользователь зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Вход в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  # ====================== МЕРОПРИЯТИЯ ======================
+  /events:
+    get:
+      tags: [Events]
+      summary: Получить список мероприятий
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Фильтр от даты
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Фильтр до даты
+      responses:
+        '200':
+          description: Список мероприятий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Events]
+      summary: Создать мероприятие (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCreateRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /events/{id}:
+    get:
+      tags: [Events]
+      summary: Получить мероприятие по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Мероприятие
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Events]
+      summary: Обновить мероприятие (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventUpdateRequest'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+    delete:
+      tags: [Events]
+      summary: Удалить мероприятие (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Мероприятие удалено
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /events/{id}/cover:
+    post:
+      tags: [Events]
+      summary: Загрузить обложку мероприятия (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cover:
+                  type: string
+                  format: binary
+                  description: Файл изображения (JPEG/PNG, макс. 5MB)
+      responses:
+        '200':
+          description: Обложка обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '413':
+          $ref: '#/components/responses/EntityTooLarge'
+
+    delete:
+      tags: [Events]
+      summary: Удалить обложку мероприятия (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Обложка удалена
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+          
+  # ====================== БРОНИРОВАНИЯ ======================
+  /bookings:
+    get:
+      tags: [Bookings]
+      summary: Получить свои бронирования
+      security:
+        - userAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingResponse'
+
+    post:
+      tags: [Bookings]
+      summary: Создать бронирование
+      security:
+        - userAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+
+  /bookings/{id}:
+    get:
+      tags: [Bookings]
+      summary: Получить бронирование по ID
+      security:
+        - userAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+
+    put:
+      tags: [Bookings]
+      summary: Обновить бронирование
+      security:
+        - userAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingUpdateRequest'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+
+    delete:
+      tags: [Bookings]
+      summary: Отменить бронирование
+      security:
+        - userAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Бронирование отменено
+
+  # ====================== АДМИНИСТРИРОВАНИЕ ======================
+  /admin/bookings:
+    get:
+      tags: [Admin]
+      summary: Получить все бронирования (Admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingResponse'
+
+  /admin/bookings/{id}:
+    delete:
+      tags: [Admin]
+      summary: Удалить бронирование (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Бронирование удалено
+
+  /user/notifications:
+    put:
+      tags: [User]
+      summary: Обновить настройки уведомлений
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPreferences'
+      responses:
+        '200':
+          description: Настройки обновлены
+
+    get:
+      tags: [User]
+      summary: Получить настройки уведомлений
+      responses:
+        '200':
+          description: Настройки уведомлений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreferences'
+          
+    delete:
+      tags: [User]
+      summary: Отменить уведомления
+      responses:
+        '204':
+          description: Настройки удалены
+  
+  /user/telegram/link:
+    post:
+      tags: [User]
+      summary: Инициировать привязку Telegram
+      responses:
+        '200':
+          description: Код для /start команды в боте
+          content:
+            text/plain:
+              schema: 
+                type: string
+                example: "A1B2C3"
+
+components:
+  schemas:
+    # ===== Аутентификация =====
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        role:
+          type: string
+          enum: [USER, ADMIN]
+
+    # ===== Мероприятия =====
+    EventCreateRequest:
+      type: object
+      required: [title, dateTime, totalTickets]
+      properties:
+        title:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        dateTime:
+          type: string
+          format: date-time
+        totalTickets:
+          type: integer
+          minimum: 1
+
+    EventUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        dateTime:
+          type: string
+          format: date-time
+        totalTickets:
+          type: integer
+          minimum: 1
+
+    EventResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        dateTime:
+          type: string
+          format: date-time
+        totalTickets:
+          type: integer
+        availableTickets:
+          type: integer
+        coverUrl:
+          type: string
+          description: URL обложки мероприятия
+          example: "/uploads/events/1/cover.jpg"
+          
+    # ===== Бронирования =====
+    CreateBookingRequest:
+      type: object
+      required: [eventId, ticketCount]
+      properties:
+        eventId:
+          type: integer
+        ticketCount:
+          type: integer
+          minimum: 1
+
+    BookingUpdateRequest:
+      type: object
+      properties:
+        ticketCount:
+          type: integer
+          minimum: 1
+
+    BookingResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        eventId:
+          type: integer
+        customerEmail:
+          type: string
+          format: email
+        ticketCount:
+          type: integer
+        bookingTime:
+          type: string
+          format: date-time
+        expiryTime:
+          type: string
+          format: date-time
+        confirmed:
+          type: boolean
+
+    NotificationPreferences:
+      type: object
+      properties:
+        notifyNewEvents:
+          type: boolean
+          default: false
+        notifyUpcoming:
+          type: boolean
+          default: true
+        notifyBeforeHours:
+          type: integer
+          minimum: 1
+          maximum: 24
+          default: 24
+
+    ErrorResponse:
+      type: object
+      required: [code, level, message]
+      properties:
+        code:
+          type: string
+          description: Машинно-читаемый код ошибки
+          example: "VALIDATION_FAILED"
+        level:
+          type: string
+          enum: [info, warning, error]
+          description: Уровень серьезности
+          example: "error"
+        message:
+          type: string
+          description: Человеко-читаемое сообщение
+          example: "Некоторые поля заполнены неверно"
+        details:
+          type: array
+          description: Детали ошибки (опционально)
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+
+    ErrorDetail:
+      type: object
+      properties:
+        field:
+          type: string
+          example: "email"
+        message:
+          type: string
+          example: "Должен быть валидным email адресом"
+
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            ValidationError:
+              value:
+                code: "VALIDATION_FAILED"
+                level: "error"
+                message: "Ошибка валидации данных"
+                details:
+                  - field: "email"
+                    message: "Должен быть валидным email адресом"
+                  - field: "password"
+                    message: "Пароль должен содержать минимум 8 символов"
+
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "UNAUTHORIZED"
+            level: "error"
+            message: "Требуется авторизация"
+
+    Forbidden:
+      description: Доступ запрещен
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "FORBIDDEN"
+            level: "error"
+            message: "Недостаточно прав для выполнения операции"
+
+    NotFound:
+      description: Ресурс не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "NOT_FOUND"
+            level: "warning"
+            message: "Мероприятие не найдено"
+
+    Conflict:
+      description: Конфликт
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "ALREADY_EXISTS"
+            level: "warning"
+            message: "Пользователь с таким email уже существует"
+
+    EntityTooLarge:
+      description: Файл слишком большой
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "ENTITY_TOO_LARGE"
+            level: "error"
+            message: "Файл слишком большой"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Токен администратора
+    
+    userAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Токен пользователя

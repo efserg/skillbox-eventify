@@ -1,0 +1,197 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202505111256-01
+      author: skillbox_author
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+                    checkConstraint: "role IN ('USER', 'ADMIN')"
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: telegram_chat_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+
+        - createTable:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: date_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_tickets
+                  type: integer
+                  constraints:
+                    nullable: false
+                    checkConstraint: "total_tickets > 0"
+              - column:
+                  name: cover_path
+                  type: varchar(255)
+              - column:
+                  name: created_by
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: bookings
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ticket_count
+                  type: integer
+                  constraints:
+                    nullable: false
+                    checkConstraint: "ticket_count > 0"
+              - column:
+                  name: booking_time
+                  type: timestamp
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: expiry_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: confirmed
+                  type: boolean
+                  defaultValueBoolean: false
+
+        - createTable:
+            tableName: notification_preferences
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: notify_new_events
+                  type: boolean
+                  defaultValueBoolean: false
+              - column:
+                  name: notify_upcoming
+                  type: boolean
+                  defaultValueBoolean: true
+              - column:
+                  name: notify_before_hours
+                  type: integer
+                  defaultValueNumeric: 24
+                  constraints:
+                    checkConstraint: "notify_before_hours BETWEEN 1 AND 24"
+
+  - changeSet:
+      id: 202505111256-02
+      author: skillbox_author
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: events
+            baseColumnNames: created_by
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_event_creator
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+
+  - changeSet:
+      id: 202505111256-03
+      author: skillbox_author
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: bookings
+            baseColumnNames: event_id
+            referencedTableName: events
+            referencedColumnNames: id
+            constraintName: fk_booking_event
+            onDelete: CASCADE
+            onUpdate: CASCADE
+
+  - changeSet:
+      id: 202505111256-04
+      author: skillbox_author
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: bookings
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_booking_user
+            onDelete: CASCADE
+            onUpdate: CASCADE
+
+  - changeSet:
+      id: 202505111256-05
+      author: skillbox_author
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: notification_preferences
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_notification_user
+            onDelete: CASCADE
+            onUpdate: CASCADE

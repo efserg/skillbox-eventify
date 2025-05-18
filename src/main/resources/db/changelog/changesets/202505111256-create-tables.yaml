@@ -36,6 +36,11 @@ databaseChangeLog:
                   defaultValueComputed: "CURRENT_TIMESTAMP"
               - column:
                   name: telegram_chat_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: timezone_id
                   type: varchar(100)
                   constraints:
                     nullable: true

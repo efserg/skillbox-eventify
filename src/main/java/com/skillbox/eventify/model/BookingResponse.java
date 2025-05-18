@@ -2,11 +2,16 @@ package com.skillbox.eventify.model;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,17 +47,27 @@ public class BookingResponse implements Serializable {
     @Schema(name = "bookingTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("bookingTime")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private OffsetDateTime bookingTime;
+    private Instant bookingTime;
 
     @Valid
     @Schema(name = "expiryTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("expiryTime")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private OffsetDateTime expiryTime;
+    private Instant expiryTime;
 
     @Schema(name = "confirmed", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("confirmed")
     private Boolean confirmed;
 
+    @Schema(name = "timezone", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty("timezone")
+    private ZoneId timezone;
+
+    @Schema(description = "Страница с бронированиями")
+    public static class PageableBookingResponse extends PageImpl<BookingResponse> {
+        public PageableBookingResponse(List<BookingResponse> content, Pageable pageable, long total) {
+            super(content, pageable, total);
+        }
+    }
 }
 

@@ -1,7 +1,10 @@
 package com.skillbox.eventify.controller;
 
+import com.skillbox.eventify.model.ErrorResponse;
+import com.skillbox.eventify.model.UserInfo;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,15 +44,18 @@ public class BookingsApi {
             responses = {
                     @ApiResponse(responseCode = "200", description = "", content = {
                             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookingResponse.class)))
-                    })
+                    }),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
             },
             security = {
                     @SecurityRequirement(name = "userAuth")
             }
     )
     @GetMapping
-    public ResponseEntity<List<BookingResponse>> bookingsGet() {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public List<BookingResponse> getAll() {
+        throw new NotImplementedException();
     }
 
 
@@ -57,17 +64,26 @@ public class BookingsApi {
             summary = "Отменить бронирование",
             tags = {"Bookings"},
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Бронирование отменено")
+                    @ApiResponse(responseCode = "204", description = "Бронирование отменено"),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "403", description = "Доступ запрещен", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "404", description = "Бронирование не найдено", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    })
             },
             security = {
                     @SecurityRequirement(name = "userAuth")
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> bookingsIdDelete(
-            @Parameter(name = "id", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id
+    public void delete(
+            @Parameter(name = "id", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id, @RequestAttribute("userInfo") UserInfo user
     ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new NotImplementedException();
     }
 
 
@@ -77,7 +93,16 @@ public class BookingsApi {
             tags = {"Bookings"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = BookingResponse.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = BookingResponse.class)),
+                    }),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "403", description = "Доступ запрещен", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "404", description = "Бронирование не найдено", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                     })
             },
             security = {
@@ -85,10 +110,10 @@ public class BookingsApi {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<BookingResponse> bookingsIdGet(
+    public BookingResponse getById(
             @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id
     ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new NotImplementedException();
     }
 
     @Operation(
@@ -98,6 +123,18 @@ public class BookingsApi {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Updated", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = BookingResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "400", description = "Ошибка валидации", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "403", description = "Доступ запрещен", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "404", description = "Бронирование не найдено", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                     })
             },
             security = {
@@ -105,10 +142,10 @@ public class BookingsApi {
             }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<BookingResponse> bookingsIdPut(
+    public BookingResponse edit(
             @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id,
             @Parameter(name = "BookingUpdateRequest", description = "") @Valid @RequestBody(required = false) BookingUpdateRequest bookingUpdateRequest) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new NotImplementedException();
     }
 
     @Operation(
@@ -118,6 +155,18 @@ public class BookingsApi {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Created", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = BookingResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "400", description = "Ошибка валидации", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "403", description = "Доступ запрещен", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "404", description = "Бронирование не найдено", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                     })
             },
             security = {
@@ -125,8 +174,8 @@ public class BookingsApi {
             }
     )
     @PostMapping
-    public ResponseEntity<BookingResponse> bookingsPost(
+    public BookingResponse create(
             @Parameter(name = "CreateBookingRequest") @Valid @RequestBody(required = false) CreateBookingRequest createBookingRequest) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new NotImplementedException();
     }
 }

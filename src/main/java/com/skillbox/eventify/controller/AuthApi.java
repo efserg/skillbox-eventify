@@ -1,5 +1,7 @@
 package com.skillbox.eventify.controller;
 
+import com.skillbox.eventify.model.ErrorResponse;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,13 +33,16 @@ public class AuthApi {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Успешный вход", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponse.class))
-                    })
+                    }),
+                    @ApiResponse(responseCode = "401", description = "Неверное имя пользователя или пароль", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
             }
     )
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> authLoginPost(
+    public AuthResponse authLoginPost(
             @Parameter(name = "LoginRequest", required = true) @Valid @RequestBody LoginRequest loginRequest) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new NotImplementedException();
     }
 
 
@@ -48,13 +53,16 @@ public class AuthApi {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Пользователь зарегистрирован", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "404", description = "Ошибка валидации логина или пароля", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                     })
             }
     )
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> authRegisterPost(
+    public AuthResponse authRegisterPost(
             @Parameter(name = "RegisterRequest", required = true) @Valid @RequestBody RegisterRequest registerRequest) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new NotImplementedException();
     }
 
 }

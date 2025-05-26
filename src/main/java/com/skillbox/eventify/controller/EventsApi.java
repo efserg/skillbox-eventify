@@ -1,8 +1,15 @@
 package com.skillbox.eventify.controller;
 
+import com.skillbox.eventify.model.BookingResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +52,8 @@ public class EventsApi {
             tags = {"Events"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "Список мероприятий", content = {
-                            @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = EventResponse.class)))
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = EventResponse.PageableEventResponse.class))
                     }),
                     @ApiResponse(responseCode = "400", description = "Неверный запрос", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
@@ -56,11 +64,12 @@ public class EventsApi {
             }
     )
     @GetMapping
-    public ResponseEntity<List<EventResponse>> eventsGet(
+    public Page<EventResponse> eventsGet(
             @Parameter(name = "from", description = "Фильтр от даты", in = ParameterIn.QUERY) @Valid @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime from,
-            @Parameter(name = "to", description = "Фильтр до даты", in = ParameterIn.QUERY) @Valid @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime to
+            @Parameter(name = "to", description = "Фильтр до даты", in = ParameterIn.QUERY) @Valid @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime to,
+            @Parameter(description = "Параметры пагинации и сортировки") @PageableDefault(sort = "dateTime", direction = Direction.ASC, size = 20) Pageable pageable
     ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new NotImplementedException();
     }
 
     @Operation(

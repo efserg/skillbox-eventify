@@ -4,9 +4,12 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -49,6 +52,14 @@ public class EventResponse implements Serializable {
     @Schema(name = "coverUrl", example = "/uploads/events/1/cover.jpg", description = "URL обложки мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("coverUrl")
     private String coverUrl;
+
+    @Schema(description = "Страница с мероприятиями")
+    public static class PageableEventResponse extends PageImpl<EventResponse> {
+
+        public PageableEventResponse(List<EventResponse> content, Pageable pageable, long total) {
+            super(content, pageable, total);
+        }
+    }
 
 }
 

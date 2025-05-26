@@ -1,5 +1,6 @@
 package com.skillbox.eventify.controller;
 
+import com.skillbox.eventify.model.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +31,10 @@ public class UserApi {
             summary = "Отменить уведомления",
             tags = {"User"},
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Настройки удалены")
+                    @ApiResponse(responseCode = "204", description = "Настройки удалены"),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
             }
     )
     @DeleteMapping("/notifications")
@@ -45,7 +49,10 @@ public class UserApi {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Настройки уведомлений", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = NotificationPreferences.class))
-                    })
+                    }),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
             }
     )
     @GetMapping("/notifications")
@@ -58,7 +65,13 @@ public class UserApi {
             summary = "Обновить настройки уведомлений",
             tags = {"User"},
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Настройки обновлены")
+                    @ApiResponse(responseCode = "200", description = "Настройки обновлены"),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+                    @ApiResponse(responseCode = "404", description = "Настройки уведомлений не найдены", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    })
             }
     )
     @PutMapping("/notifications")
@@ -74,7 +87,10 @@ public class UserApi {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Код для /start команды в боте", content = {
                             @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
-                    })
+                    }),
+                    @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    }),
             }
     )
     @PostMapping(value = "/telegram/link", produces = {"text/plain"})

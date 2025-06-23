@@ -2,8 +2,6 @@ package com.skillbox.eventify.controller;
 
 import com.skillbox.eventify.model.ErrorResponse;
 import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +22,7 @@ import jakarta.validation.Valid;
 @Validated
 @RequestMapping("/auth")
 @Tag(name = "Auth", description = "Аутентификация и регистрация")
-public class AuthApi {
+public class AuthController {
 
     @Operation(
             operationId = "authLoginPost",

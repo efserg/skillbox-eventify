@@ -22,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.experimental.FieldNameConstants;
 
 @Entity
 @Table(name = "events")
@@ -29,6 +30,7 @@ import jakarta.persistence.Table;
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@FieldNameConstants
 @NoArgsConstructor
 public class Event {
     @Id

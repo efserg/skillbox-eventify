@@ -14,9 +14,9 @@ public interface BookingMapper {
     @Mapping(target = "eventId", source = "booking.event.id")
     @Mapping(target = "customerEmail", source = "booking.user.email")
     @Mapping(target = "timezone", source = "booking.user.timezone")
-    BookingResponse map(Booking booking);
+    BookingResponse entityToResponse(Booking booking);
 
-    default Page<BookingResponse> map(Page<Booking> source) {
-        return source.map(this::map);
+    default Page<BookingResponse> entityToResponse(Page<Booking> source) {
+        return source.map(this::entityToResponse);
     }
 }

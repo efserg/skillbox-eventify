@@ -45,6 +45,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         );
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                request.setAttribute("userInfo", userDetails);
+
             }
         } catch (Exception e) {
             logger.error("Ошибка аутентификации: ", e);

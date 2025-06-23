@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.experimental.FieldNameConstants;
 
 @Entity
 @Table(name = "bookings")
@@ -24,6 +25,7 @@ import jakarta.persistence.Table;
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@FieldNameConstants
 @NoArgsConstructor
 public class Booking {
     @Id

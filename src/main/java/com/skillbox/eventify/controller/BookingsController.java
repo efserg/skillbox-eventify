@@ -1,12 +1,10 @@
 package com.skillbox.eventify.controller;
 
 import com.skillbox.eventify.model.ErrorResponse;
-import com.skillbox.eventify.model.UserInfo;
 import java.util.List;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +33,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/bookings")
 @Validated
 @Tag(name = "Bookings", description = "Операции с бронированиями")
-public class BookingsApi {
+public class BookingsController {
 
     @Operation(
             operationId = "bookingsGet",
@@ -81,7 +79,7 @@ public class BookingsApi {
     )
     @DeleteMapping("/{id}")
     public void delete(
-            @Parameter(name = "id", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id, @RequestAttribute("userInfo") UserInfo user
+            @Parameter(name = "id", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id, @RequestAttribute("userInfo") UserDetails user
     ) {
         throw new NotImplementedException();
     }

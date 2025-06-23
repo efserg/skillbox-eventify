@@ -1,4 +1,4 @@
-package com.skillbox.eventify.service;
+package com.skillbox.eventify.service.impl;
 
 import com.skillbox.eventify.repository.UserRepository;
 import com.skillbox.eventify.schema.User;

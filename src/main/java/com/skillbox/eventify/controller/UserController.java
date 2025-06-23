@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/user")
 @Validated
 @Tag(name = "User", description = "Настройки уведомлений пользователя")
-public class UserApi {
+public class UserController {
 
     @Operation(
             operationId = "userNotificationsDelete",

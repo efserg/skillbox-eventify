@@ -3,7 +3,7 @@ info:
   title: OpenAPI definition
   version: v0
 servers:
-  - url: http://localhost:8080
+  - url: 'http://localhost:8080'
     description: Generated server url
 tags:
   - name: Auth
@@ -17,7 +17,7 @@ tags:
   - name: Events
     description: Управление мероприятиями
 paths:
-  "/user/notifications":
+  /user/notifications:
     get:
       tags:
         - User
@@ -29,13 +29,13 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/NotificationPreferences"
+                $ref: '#/components/schemas/NotificationPreferences'
         '401':
           description: Не авторизован
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - User
@@ -45,7 +45,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/NotificationPreferences"
+              $ref: '#/components/schemas/NotificationPreferences'
       responses:
         '200':
           description: Настройки обновлены
@@ -54,13 +54,13 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Настройки уведомлений не найдены
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - User
@@ -74,143 +74,8 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/events/{id}":
-    get:
-      tags:
-        - Events
-      summary: Получить мероприятие по ID
-      operationId: eventsIdGet
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: Мероприятие
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/EventResponse"
-        '400':
-          description: Неверный запрос
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '404':
-          description: Ресурс не найден
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-    put:
-      tags:
-        - Events
-      summary: Обновить мероприятие (Admin)
-      operationId: eventsIdPut
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/EventUpdateRequest"
-      responses:
-        '200':
-          description: Updated
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/EventResponse"
-        '400':
-          description: Неверный запрос
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '401':
-          description: Не авторизован
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: Доступ запрещен
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '404':
-          description: Ресурс не найден
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '409':
-          description: Конфликт
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      security:
-        - bearerAuth: []
-    delete:
-      tags:
-        - Events
-      summary: Удалить мероприятие (Admin)
-      operationId: eventsIdDelete
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '204':
-          description: Мероприятие удалено
-        '400':
-          description: Неверный запрос
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '401':
-          description: Не авторизован
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: Доступ запрещен
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '404':
-          description: Ресурс не найден
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '409':
-          description: Конфликт
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      security:
-        - bearerAuth: []
-  "/bookings/{id}":
+                $ref: '#/components/schemas/ErrorResponse'
+  '/bookings/{id}':
     get:
       tags:
         - Bookings
@@ -229,25 +94,25 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/BookingResponse"
+                $ref: '#/components/schemas/BookingResponse'
         '401':
           description: Не авторизован
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Доступ запрещен
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Бронирование не найдено
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - userAuth: []
     put:
@@ -266,38 +131,38 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/BookingUpdateRequest"
+              $ref: '#/components/schemas/BookingUpdateRequest'
       responses:
         '200':
           description: Updated
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/BookingResponse"
+                $ref: '#/components/schemas/BookingResponse'
         '400':
           description: Ошибка валидации
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Не авторизован
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Доступ запрещен
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Бронирование не найдено
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - userAuth: []
     delete:
@@ -320,22 +185,126 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Доступ запрещен
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Бронирование не найдено
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - userAuth: []
-  "/admin/bookings/{id}/confirm":
+  '/admin/events/{id}':
+    put:
+      tags:
+        - Admin
+      summary: Обновить мероприятие (Admin)
+      operationId: eventsIdPut
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventUpdateRequest'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Доступ запрещен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфликт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - Admin
+      summary: Удалить мероприятие (Admin)
+      operationId: eventsIdDelete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: Мероприятие удалено
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Доступ запрещен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфликт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - bearerAuth: []
+  '/admin/bookings/{id}/confirm':
     put:
       tags:
         - Admin
@@ -356,22 +325,22 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Доступ запрещен
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Бронирование не найдено
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
-  "/user/telegram/link":
+  /user/telegram/link:
     post:
       tags:
         - User
@@ -389,8 +358,278 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/events":
+                $ref: '#/components/schemas/ErrorResponse'
+  /bookings:
+    get:
+      tags:
+        - Bookings
+      summary: Получить свои бронирования
+      operationId: bookingsGet
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingResponse'
+        '401':
+          description: Не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - userAuth: []
+    post:
+      tags:
+        - Bookings
+      summary: Создать бронирование
+      operationId: bookingsPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        '400':
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Доступ запрещен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Бронирование не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - userAuth: []
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Регистрация пользователя
+      operationId: authRegisterPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        '201':
+          description: Пользователь зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '404':
+          description: Ошибка валидации логина или пароля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Вход в систему
+      operationId: authLoginPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Неверное имя пользователя или пароль
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /admin/events:
+    post:
+      tags:
+        - Admin
+      summary: Создать мероприятие (Admin)
+      operationId: eventsPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Доступ запрещен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфликт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - bearerAuth: []
+  '/admin/events/{id}/cover':
+    post:
+      tags:
+        - Admin
+      summary: Загрузить обложку мероприятия (Admin)
+      operationId: eventsIdCoverPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cover:
+                  type: string
+                  description: 'Файл изображения (JPEG/PNG, макс. 5MB)'
+                  format: binary
+      responses:
+        '200':
+          description: Обложка обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Доступ запрещен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфликт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Файл слишком большой
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - Admin
+      summary: Удалить обложку мероприятия (Admin)
+      operationId: eventsIdCoverDelete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: Обложка удалена
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Доступ запрещен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - bearerAuth: []
+  /events:
     get:
       tags:
         - Events
@@ -416,329 +655,106 @@ paths:
           description: Параметры пагинации и сортировки
           required: true
           schema:
-            "$ref": "#/components/schemas/Pageable"
+            $ref: '#/components/schemas/Pageable'
       responses:
         '200':
           description: Список мероприятий
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/PageableEventResponse"
+                $ref: '#/components/schemas/PageableEventResponse'
         '400':
           description: Неверный запрос
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Не авторизован
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-    post:
-      tags:
-        - Events
-      summary: Создать мероприятие (Admin)
-      operationId: eventsPost
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/EventCreateRequest"
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/EventResponse"
-        '400':
-          description: Неверный запрос
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '401':
-          description: Не авторизован
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: Доступ запрещен
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '409':
-          description: Конфликт
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      security:
-        - bearerAuth: []
-  "/events/{id}/cover":
-    post:
-      tags:
-        - Events
-      summary: Загрузить обложку мероприятия (Admin)
-      operationId: eventsIdCoverPost
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                cover:
-                  type: string
-                  description: Файл изображения (JPEG/PNG, макс. 5MB)
-                  format: binary
-      responses:
-        '200':
-          description: Обложка обновлена
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/EventResponse"
-        '400':
-          description: Неверный запрос
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '401':
-          description: Не авторизован
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: Доступ запрещен
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '404':
-          description: Ресурс не найден
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '409':
-          description: Конфликт
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '413':
-          description: Файл слишком большой
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      security:
-        - bearerAuth: []
-    delete:
-      tags:
-        - Events
-      summary: Удалить обложку мероприятия (Admin)
-      operationId: eventsIdCoverDelete
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '204':
-          description: Обложка удалена
-        '400':
-          description: Неверный запрос
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '401':
-          description: Не авторизован
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: Доступ запрещен
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '404':
-          description: Ресурс не найден
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      security:
-        - bearerAuth: []
-  "/bookings":
+                $ref: '#/components/schemas/ErrorResponse'
+  '/events/{id}':
     get:
       tags:
-        - Bookings
-      summary: Получить свои бронирования
-      operationId: bookingsGet
+        - Events
+      summary: Получить мероприятие по ID
+      operationId: eventsIdGet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
       responses:
         '200':
-          description: OK
+          description: Мероприятие
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/BookingResponse"
-        '401':
-          description: Не авторизован
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      security:
-        - userAuth: []
-    post:
-      tags:
-        - Bookings
-      summary: Создать бронирование
-      operationId: bookingsPost
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/CreateBookingRequest"
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/BookingResponse"
+                $ref: '#/components/schemas/EventResponse'
         '400':
-          description: Ошибка валидации
+          description: Неверный запрос
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '401':
-          description: Не авторизован
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: Доступ запрещен
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Бронирование не найдено
+          description: Ресурс не найден
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      security:
-        - userAuth: []
-  "/auth/register":
-    post:
-      tags:
-        - Auth
-      summary: Регистрация пользователя
-      operationId: authRegisterPost
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/RegisterRequest"
-        required: true
-      responses:
-        '201':
-          description: Пользователь зарегистрирован
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/AuthResponse"
-        '404':
-          description: Ошибка валидации логина или пароля
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/auth/login":
-    post:
-      tags:
-        - Auth
-      summary: Вход в систему
-      operationId: authLoginPost
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/LoginRequest"
-        required: true
-      responses:
-        '200':
-          description: Успешный вход
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/AuthResponse"
-        '401':
-          description: Неверное имя пользователя или пароль
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/admin/bookings":
+                $ref: '#/components/schemas/ErrorResponse'
+  /admin/bookings:
     get:
       tags:
         - Admin
       summary: Получить все бронирования (Admin)
       operationId: adminBookingsGet
       parameters:
+        - name: eventId
+          in: query
+          description: Идентификатор мероприятия
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: confirmedOnly
+          in: query
+          description: Только неподтвержденные
+          required: false
+          schema:
+            type: boolean
         - name: pageable
           in: query
           description: Параметры пагинации и сортировки
           required: true
           schema:
-            "$ref": "#/components/schemas/Pageable"
+            $ref: '#/components/schemas/Pageable'
       responses:
         '200':
           description: Страница с бронированиями
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/PageableBookingResponse"
+                $ref: '#/components/schemas/PageableBookingResponse'
         '401':
           description: Не авторизован
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Доступ запрещен
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
-  "/admin/bookings/{id}":
+  '/admin/bookings/{id}':
     delete:
       tags:
         - Admin
@@ -759,19 +775,19 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Доступ запрещен
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Бронирование не найдено
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
 components:
@@ -813,7 +829,7 @@ components:
           type: array
           description: Детали ошибки (опционально)
           items:
-            "$ref": "#/components/schemas/ErrorDetail"
+            $ref: '#/components/schemas/ErrorDetail'
     NotificationPreferences:
       type: object
       properties:
@@ -823,45 +839,6 @@ components:
           type: boolean
         notifyBeforeHours:
           maximum: 24
-          minimum: 1
-          type: integer
-          format: int32
-    EventResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        title:
-          type: string
-        description:
-          type: string
-        dateTime:
-          type: string
-          format: date-time
-        totalTickets:
-          type: integer
-          format: int32
-        availableTickets:
-          type: integer
-          format: int32
-        coverUrl:
-          type: string
-          description: URL обложки мероприятия
-          example: "/uploads/events/1/cover.jpg"
-    EventUpdateRequest:
-      type: object
-      properties:
-        title:
-          maxLength: 100
-          minLength: 0
-          type: string
-        description:
-          type: string
-        dateTime:
-          type: string
-          format: date-time
-        totalTickets:
           minimum: 1
           type: integer
           format: int32
@@ -918,9 +895,6 @@ components:
                             format: int32
                           id:
                             type: string
-                      instant:
-                        type: string
-                        format: date-time
                       duration:
                         type: object
                         properties:
@@ -955,6 +929,9 @@ components:
                         format: date-time
                       overlap:
                         type: boolean
+                      instant:
+                        type: string
+                        format: date-time
                 transitionRules:
                   type: array
                   items:
@@ -1019,7 +996,7 @@ components:
                         type: integer
                         format: int32
                       localTime:
-                        "$ref": "#/components/schemas/LocalTime"
+                        $ref: '#/components/schemas/LocalTime'
                       midnightEndOfDay:
                         type: boolean
     LocalTime:
@@ -1044,11 +1021,30 @@ components:
           minimum: 1
           type: integer
           format: int32
-    EventCreateRequest:
-      required:
-        - dateTime
-        - title
-        - totalTickets
+    EventResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        description:
+          type: string
+        dateTime:
+          type: string
+          format: date-time
+        totalTickets:
+          type: integer
+          format: int32
+        availableTickets:
+          type: integer
+          format: int32
+        coverUrl:
+          type: string
+          description: URL обложки мероприятия
+          example: /uploads/events/1/cover.jpg
+    EventUpdateRequest:
       type: object
       properties:
         title:
@@ -1109,23 +1105,43 @@ components:
           type: string
         password:
           type: string
+    EventCreateRequest:
+      required:
+        - dateTime
+        - title
+        - totalTickets
+      type: object
+      properties:
+        title:
+          maxLength: 100
+          minLength: 0
+          type: string
+        description:
+          type: string
+        dateTime:
+          type: string
+          format: date-time
+        totalTickets:
+          minimum: 1
+          type: integer
+          format: int32
     PageableEventResponse:
       type: object
       properties:
         content:
           type: array
           items:
-            "$ref": "#/components/schemas/EventResponse"
+            $ref: '#/components/schemas/EventResponse'
         pageable:
-          "$ref": "#/components/schemas/PageableObject"
+          $ref: '#/components/schemas/PageableObject'
+        last:
+          type: boolean
         totalElements:
           type: integer
           format: int64
         totalPages:
           type: integer
           format: int32
-        last:
-          type: boolean
         size:
           type: integer
           format: int32
@@ -1135,7 +1151,7 @@ components:
         sort:
           type: array
           items:
-            "$ref": "#/components/schemas/SortObject"
+            $ref: '#/components/schemas/SortObject'
         first:
           type: boolean
         numberOfElements:
@@ -1147,23 +1163,23 @@ components:
     PageableObject:
       type: object
       properties:
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        pageNumber:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
         offset:
           type: integer
           format: int64
         sort:
           type: array
           items:
-            "$ref": "#/components/schemas/SortObject"
+            $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
     SortObject:
       type: object
       properties:
@@ -1198,17 +1214,17 @@ components:
         content:
           type: array
           items:
-            "$ref": "#/components/schemas/BookingResponse"
+            $ref: '#/components/schemas/BookingResponse'
         pageable:
-          "$ref": "#/components/schemas/PageableObject"
+          $ref: '#/components/schemas/PageableObject'
+        last:
+          type: boolean
         totalElements:
           type: integer
           format: int64
         totalPages:
           type: integer
           format: int32
-        last:
-          type: boolean
         size:
           type: integer
           format: int32
@@ -1218,7 +1234,7 @@ components:
         sort:
           type: array
           items:
-            "$ref": "#/components/schemas/SortObject"
+            $ref: '#/components/schemas/SortObject'
         first:
           type: boolean
         numberOfElements:

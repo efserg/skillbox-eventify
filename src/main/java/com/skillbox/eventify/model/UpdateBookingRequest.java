@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Min;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingUpdateRequest implements Serializable {
+public class UpdateBookingRequest implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

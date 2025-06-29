@@ -10,18 +10,26 @@ import com.skillbox.eventify.exception.WrongFileException;
 import com.skillbox.eventify.mapper.EventMapper;
 import com.skillbox.eventify.model.EventCreateRequest;
 import com.skillbox.eventify.model.EventResponse;
+import com.skillbox.eventify.model.UserInfo;
 import com.skillbox.eventify.repository.BookingRepository;
 import com.skillbox.eventify.repository.EventRepository;
 import com.skillbox.eventify.schema.Event;
+import com.skillbox.eventify.schema.Event.Fields;
 import com.skillbox.eventify.service.EventService;
 import com.skillbox.eventify.service.FileStorageService;
+import jakarta.persistence.criteria.Predicate;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.Stream.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,8 +54,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponse createEvent(EventCreateRequest request, UserDetails user) {
-        if (request.getDateTime().isBefore(OffsetDateTime.now())) {
+    public EventResponse createEvent(EventCreateRequest request, UserInfo user) {
+        if (request.getDateTime().isBefore(Instant.now())) {
             throw new WrongDateException("Дата мероприятия не может быть в прошлом");
         }
         Event event = eventMapper.requestToEntity(request, user);
@@ -113,7 +121,7 @@ public class EventServiceImpl implements EventService {
 
             return eventMapper.entityToResponse(savedEvent);
 
-        } catch (FileStorageException  e) {
+        } catch (FileStorageException e) {
             log.error("Ошибка при удалении файлов мероприятия {}: {}", eventId, e.getMessage());
             throw new ConflictException("Ошибка при сохранении файла: " + e.getMessage());
         }
@@ -139,5 +147,44 @@ public class EventServiceImpl implements EventService {
             log.error("Ошибка при удалении файлов мероприятия {}: {}", eventId, e.getMessage());
             throw new ConflictException("Ошибка при удалении файла: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Page<EventResponse> getEvents(OffsetDateTime from, OffsetDateTime to, Pageable pageable) {
+        if (from != null && to != null && from.isAfter(to)) {
+            throw new WrongDateException("Дата 'от' не может быть позже даты 'до'");
+        }
+
+        Instant fromInstant = from != null ? from.toInstant() : null;
+        Instant toInstant = to != null ? to.toInstant() : null;
+
+        Specification<Event> spec = buildSpecification(fromInstant, toInstant);
+
+        Page<Event> events = eventRepository.findAll(spec, pageable);
+
+        return eventMapper.toPageResponse(events);
+    }
+
+    @Override
+    public EventResponse getEvent(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException(id));
+        return eventMapper.entityToResponse(event);
+
+    }
+
+    private Specification<Event> buildSpecification(Instant from,
+                                                    Instant to) {
+        return (root, query, cb) -> {
+            final Builder<Predicate> builder = Stream.builder();
+            if (from != null) {
+                builder.add(cb.greaterThanOrEqualTo(root.get(Fields.dateTime), from));
+            }
+
+            if (to != null) {
+                builder.add(cb.lessThanOrEqualTo(root.get(Fields.dateTime), to));
+            }
+            return cb.and(builder.build().toArray(Predicate[]::new));
+        };
     }
 }

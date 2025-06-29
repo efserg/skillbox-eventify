@@ -5,6 +5,7 @@ import com.skillbox.eventify.model.ErrorResponse;
 import com.skillbox.eventify.model.EventCreateRequest;
 import com.skillbox.eventify.model.EventResponse;
 import com.skillbox.eventify.model.EventUpdateRequest;
+import com.skillbox.eventify.model.UserInfo;
 import com.skillbox.eventify.service.BookingService;
 import com.skillbox.eventify.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -308,7 +309,7 @@ public class AdminController {
     @PostMapping("/events")
     public EventResponse eventsPost(
             @Parameter(name = "EventCreateRequest", description = "") @Valid @RequestBody(required = true) EventCreateRequest eventCreateRequest,
-            @RequestAttribute("userInfo") UserDetails user) {
+            @RequestAttribute("userInfo") UserInfo user) {
         return eventService.createEvent(eventCreateRequest, user);
     }
 }

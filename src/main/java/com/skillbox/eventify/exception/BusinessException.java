@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public interface BusinessException {
 
-    public enum Level {
+    enum Level {
         INFO,
         WARNING,
         ERROR

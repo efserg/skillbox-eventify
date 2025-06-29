@@ -2,6 +2,7 @@ package com.skillbox.eventify.model;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public class EventResponse implements Serializable {
     @Valid
     @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("dateTime")
-    private OffsetDateTime dateTime;
+    private Instant dateTime;
 
     @Schema(name = "totalTickets", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("totalTickets")

@@ -2,6 +2,7 @@ package com.skillbox.eventify.model;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 import lombok.AllArgsConstructor;
@@ -38,7 +39,7 @@ public class EventCreateRequest implements Serializable {
     @Valid
     @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("dateTime")
-    private OffsetDateTime dateTime;
+    private Instant dateTime;
 
     @NotNull
     @Min(1)

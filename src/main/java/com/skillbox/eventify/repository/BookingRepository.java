@@ -1,5 +1,6 @@
 package com.skillbox.eventify.repository;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,8 +13,9 @@ import com.skillbox.eventify.schema.Booking;
 @Repository
 public interface BookingRepository extends CrudRepository<Booking, Long> {
     Page<Booking> findAll(Specification<Booking> spec, Pageable pageable);
+    List<Booking> findAllByUser_Id(Long userId);
 
-    @Query("select sum(b.ticketCount) from Booking b where b.event.id = :eventId ")
+    @Query("select COALESCE(sum(b.ticketCount), 0) from Booking b where b.event.id = :eventId ")
     Integer bookedCount(Long eventId);
 
     @Modifying

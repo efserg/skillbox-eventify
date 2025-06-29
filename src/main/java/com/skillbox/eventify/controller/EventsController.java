@@ -1,7 +1,9 @@
 package com.skillbox.eventify.controller;
 
+import com.skillbox.eventify.service.EventService;
 import java.time.OffsetDateTime;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +31,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/events")
 @Validated
 @Tag(name = "Events", description = "Управление мероприятиями")
+@RequiredArgsConstructor
 public class EventsController {
+
+    private final EventService eventService;
 
     @Operation(
             operationId = "eventsGet",
@@ -54,7 +59,7 @@ public class EventsController {
             @Parameter(name = "to", description = "Фильтр до даты", in = ParameterIn.QUERY) @Valid @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime to,
             @Parameter(description = "Параметры пагинации и сортировки") @PageableDefault(sort = "dateTime", direction = Direction.ASC, size = 20) Pageable pageable
     ) {
-        throw new NotImplementedException();
+        return eventService.getEvents(from, to, pageable);
     }
 
     @Operation(
@@ -75,9 +80,9 @@ public class EventsController {
     )
     @GetMapping("/{id}")
     public EventResponse eventsIdGet(
-            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id
+            @Parameter(name = "id", description = "Идентификатор мероприятия", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
     ) {
-        throw new NotImplementedException();
+        return eventService.getEvent(id);
     }
 
 }

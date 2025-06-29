@@ -15,6 +15,7 @@ public abstract class NotFoundException extends RuntimeException implements Busi
     }
 
     public NotFoundException() {
+        super();
     }
 
     public NotFoundException(String message) {

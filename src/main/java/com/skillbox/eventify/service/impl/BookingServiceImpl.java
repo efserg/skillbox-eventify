@@ -1,10 +1,18 @@
 package com.skillbox.eventify.service.impl;
 
+import com.skillbox.eventify.exception.BookingForbiddenException;
 import com.skillbox.eventify.exception.BookingNotFoundException;
+import com.skillbox.eventify.exception.ConflictException;
+import com.skillbox.eventify.exception.EventNotFoundException;
+import com.skillbox.eventify.exception.NumberValidateException;
+import com.skillbox.eventify.model.CreateBookingRequest;
+import com.skillbox.eventify.model.UserInfo;
+import com.skillbox.eventify.repository.EventRepository;
 import com.skillbox.eventify.schema.Booking.Fields;
 import com.skillbox.eventify.schema.Event;
 import com.skillbox.eventify.service.BookingService;
 import jakarta.persistence.criteria.Predicate;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.Stream.Builder;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
 
+    private final EventRepository eventRepository;
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
 
@@ -52,6 +61,60 @@ public class BookingServiceImpl implements BookingService {
         final Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException(id));
         booking.setConfirmed(true);
+    }
+
+    @Override
+    public List<BookingResponse> findByUserId(Long userId) {
+        final List<Booking> bookings = bookingRepository.findAllByUser_Id(userId);
+        return bookingMapper.entityToResponse(bookings);
+    }
+
+    @Override
+    @Transactional
+    public BookingResponse createBooking(CreateBookingRequest request, UserInfo user) {
+        validateBookingRequest(request);
+
+        Event event = eventRepository.findById(request.getEventId())
+                .orElseThrow(() -> new EventNotFoundException(request.getEventId()));
+
+        checkTicketAvailability(event, request.getTicketCount());
+
+        final Booking booking = bookingMapper.requestToEntity(request);
+        Booking savedBooking = bookingRepository.save(booking);
+        return bookingMapper.entityToResponse(savedBooking);
+    }
+
+    @Override
+    public BookingResponse getById(Long id, UserInfo user) {
+        final Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingNotFoundException(id));
+        if (!booking.getUser().getId().equals(user.getId()) ) {
+            throw new BookingForbiddenException();
+        }
+        return bookingMapper.entityToResponse(booking);
+    }
+
+    @Override
+    public void cancelBooking(Long id, UserInfo user) {
+        final Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingNotFoundException(id));
+        if (!booking.getUser().getId().equals(user.getId()) ) {
+            throw new BookingForbiddenException();
+        }
+        bookingRepository.delete(booking);
+    }
+
+    private void validateBookingRequest(CreateBookingRequest request) {
+        if (request.getTicketCount() <= 0) {
+            throw new NumberValidateException("Количество билетов должно быть положительным");
+        }
+    }
+
+    private void checkTicketAvailability(Event event, int requestedTickets) {
+        int availableTickets = event.getTotalTickets() - bookingRepository.bookedCount(event.getId());
+        if (requestedTickets > availableTickets) {
+            throw new ConflictException("Запрошено больше билетов, чем доступно. Доступно: " + availableTickets);
+        }
     }
 
     private Specification<Booking> buildSpecification(Long eventId, Boolean unconfirmedOnly) {

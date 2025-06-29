@@ -22,12 +22,16 @@ public class CreateBookingRequest implements Serializable {
     @NotNull
     @Schema(name = "eventId", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("eventId")
-    private Integer eventId;
+    private Long eventId;
 
     @NotNull
     @Min(1)
     @Schema(name = "ticketCount", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("ticketCount")
     private Integer ticketCount;
+
+    public Long getEventId() {
+        return eventId;
+    }
 }
 

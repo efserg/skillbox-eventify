@@ -5,11 +5,13 @@ import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -27,19 +29,13 @@ public class AuthResponse implements Serializable {
     @JsonProperty("role")
     private RoleEnum role;
 
-    /**
-     * Gets or Sets role
-     */
+    @RequiredArgsConstructor
     public enum RoleEnum {
         USER("USER"),
 
         ADMIN("ADMIN");
 
         private final String value;
-
-        RoleEnum(String value) {
-            this.value = value;
-        }
 
         @JsonValue
         public String getValue() {

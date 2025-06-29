@@ -1,5 +1,7 @@
 package com.skillbox.eventify.config;
 
+import com.skillbox.eventify.model.UserInfo;
+import com.skillbox.eventify.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -17,7 +18,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(
@@ -30,21 +31,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String jwt = parseJwt(request);
 
             if (jwt != null && jwtUtils.validateToken(jwt)) {
-                // 2. Получение имени пользователя из токена
                 String username = jwtUtils.getUsernameFromToken(jwt);
 
-                // 3. Загрузка пользователя из БД
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-                // 4. Создание объекта аутентификации
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                UserInfo userDetails = userService.loadUserByUsername(username);
 
                 request.setAttribute("userInfo", userDetails);
 
@@ -53,7 +42,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.error("Ошибка аутентификации: ", e);
         }
 
-        // 6. Продолжение цепочки фильтров
         filterChain.doFilter(request, response);
     }
 

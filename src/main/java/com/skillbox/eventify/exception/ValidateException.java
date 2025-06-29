@@ -15,6 +15,7 @@ public abstract class ValidateException extends RuntimeException implements Busi
     }
 
     public ValidateException() {
+        super();
     }
 
     public ValidateException(String message) {

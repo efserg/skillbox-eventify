@@ -26,7 +26,7 @@ public class EventResponse implements Serializable {
 
     @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @Schema(name = "title", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("title")

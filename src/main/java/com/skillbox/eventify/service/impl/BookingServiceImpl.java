@@ -6,13 +6,16 @@ import com.skillbox.eventify.exception.ConflictException;
 import com.skillbox.eventify.exception.EventNotFoundException;
 import com.skillbox.eventify.exception.NumberValidateException;
 import com.skillbox.eventify.model.CreateBookingRequest;
+import com.skillbox.eventify.model.UpdateBookingRequest;
 import com.skillbox.eventify.model.UserInfo;
 import com.skillbox.eventify.repository.EventRepository;
 import com.skillbox.eventify.schema.Booking.Fields;
 import com.skillbox.eventify.schema.Event;
 import com.skillbox.eventify.service.BookingService;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.Stream.Builder;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +46,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Integer calculateBookedTickets(Long eventId) {
-        return bookingRepository.bookedCount(eventId);
-    }
-
-    @Override
     @Transactional
     public void delete(Long id) {
         final Booking booking = bookingRepository.findById(id)
@@ -72,14 +70,14 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponse createBooking(CreateBookingRequest request, UserInfo user) {
-        validateBookingRequest(request);
+        validateTicketCount(request.getTicketCount());
 
         Event event = eventRepository.findById(request.getEventId())
                 .orElseThrow(() -> new EventNotFoundException(request.getEventId()));
 
         checkTicketAvailability(event, request.getTicketCount());
 
-        final Booking booking = bookingMapper.requestToEntity(request);
+        Booking booking = bookingMapper.requestToEntity(request, event, user);
         Booking savedBooking = bookingRepository.save(booking);
         return bookingMapper.entityToResponse(savedBooking);
     }
@@ -88,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse getById(Long id, UserInfo user) {
         final Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException(id));
-        if (!booking.getUser().getId().equals(user.getId()) ) {
+        if (!booking.getUser().getId().equals(user.getId())) {
             throw new BookingForbiddenException();
         }
         return bookingMapper.entityToResponse(booking);
@@ -98,14 +96,40 @@ public class BookingServiceImpl implements BookingService {
     public void cancelBooking(Long id, UserInfo user) {
         final Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException(id));
-        if (!booking.getUser().getId().equals(user.getId()) ) {
+        if (!booking.getUser().getId().equals(user.getId())) {
             throw new BookingForbiddenException();
         }
         bookingRepository.delete(booking);
     }
 
-    private void validateBookingRequest(CreateBookingRequest request) {
-        if (request.getTicketCount() <= 0) {
+    @Override
+    public BookingResponse update(Long id, @Valid UpdateBookingRequest request, UserInfo user) {
+        validateTicketCount(request.getTicketCount());
+        final Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingNotFoundException(id));
+        if (!booking.getUser().getId().equals(user.getId())) {
+            throw new BookingForbiddenException();
+        }
+        final Integer requestTicketCount = request.getTicketCount();
+        final Integer ticketCount = booking.getTicketCount();
+        if (!Objects.equals(requestTicketCount, ticketCount)) {
+            final Event event = booking.getEvent();
+            final Integer bookedCount = bookingRepository.bookedCount(event.getId());
+            final Integer totalTickets = event.getTotalTickets();
+            int newBookedCount = bookedCount - ticketCount + requestTicketCount;
+            if (newBookedCount > totalTickets) {
+                int availableTickets = totalTickets - (bookedCount - ticketCount);
+                throw new NumberValidateException("Для бронирования доступно %s билетов".formatted(availableTickets));
+            }
+            booking.setTicketCount(requestTicketCount);
+            final Booking saved = bookingRepository.save(booking);
+            return bookingMapper.entityToResponse(saved);
+        }
+        return bookingMapper.entityToResponse(booking);
+    }
+
+    private void validateTicketCount(Integer ticketCount ) {
+        if (ticketCount < 1) {
             throw new NumberValidateException("Количество билетов должно быть положительным");
         }
     }

@@ -1,5 +1,6 @@
 package com.skillbox.eventify.model;
 
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -26,13 +27,13 @@ public class BookingResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "id", requiredMode = RequiredMode.REQUIRED)
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
-    @Schema(name = "eventId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("eventId")
-    private Integer eventId;
+    @Schema(name = "event", requiredMode = RequiredMode.REQUIRED)
+    @JsonProperty("event")
+    private EventResponse event;
 
     @Email
     @Schema(name = "customerEmail", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
@@ -44,10 +45,10 @@ public class BookingResponse implements Serializable {
     private Integer ticketCount;
 
     @Valid
-    @Schema(name = "bookingTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("bookingTime")
+    @Schema(name = "createdAt", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty("createdAt")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Instant bookingTime;
+    private Instant createdAt;
 
     @Valid
     @Schema(name = "expiryTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)

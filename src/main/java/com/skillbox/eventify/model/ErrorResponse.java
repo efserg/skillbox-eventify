@@ -1,14 +1,17 @@
 package com.skillbox.eventify.model;
 
+import com.skillbox.eventify.exception.BusinessException.Level;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Singular;
 import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ErrorResponse implements Serializable {
 
     @Serial
@@ -42,6 +46,7 @@ public class ErrorResponse implements Serializable {
     @Valid
     @Schema(name = "details", description = "Детали ошибки (опционально)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("details")
+    @Singular
     private List<@Valid ErrorDetail> details;
 
     /**
@@ -60,22 +65,9 @@ public class ErrorResponse implements Serializable {
         private final String value;
 
         @JsonCreator
-        public static LevelEnum fromValue(String value) {
-            for (LevelEnum b : LevelEnum.values()) {
-                if (b.value.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
+        public static LevelEnum fromValue(@NotNull Level lvl) {
+            return LevelEnum.valueOf(lvl.name());
         }
-    }
-
-    public ErrorResponse addDetailsItem(ErrorDetail detailsItem) {
-        if (this.details == null) {
-            this.details = new ArrayList<>();
-        }
-        this.details.add(detailsItem);
-        return this;
     }
 }
 

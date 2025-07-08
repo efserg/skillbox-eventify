@@ -14,6 +14,11 @@ public abstract class ValidateException extends RuntimeException implements Busi
         return HttpStatus.BAD_REQUEST;
     }
 
+    @Override
+    public String getCode() {
+        return "VALIDATION_ERROR";
+    }
+
     public ValidateException() {
         super();
     }

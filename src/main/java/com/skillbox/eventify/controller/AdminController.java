@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -276,9 +277,9 @@ public class AdminController {
     )
     @PutMapping("/events/{id}")
     public EventResponse eventsIdPut(
-            @Parameter(name = "id", description = "Идентификатор мероприятия", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id,
+            @Parameter(name = "id", description = "Идентификатор мероприятия", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id,
             @Parameter(name = "EventUpdateRequest", description = "") @Valid @RequestBody(required = false) EventUpdateRequest eventUpdateRequest) {
-        throw new NotImplementedException();
+        return eventService.update(id, eventUpdateRequest);
     }
 
     @Operation(
@@ -309,7 +310,7 @@ public class AdminController {
     @PostMapping("/events")
     public EventResponse eventsPost(
             @Parameter(name = "EventCreateRequest", description = "") @Valid @RequestBody(required = true) EventCreateRequest eventCreateRequest,
-            @RequestAttribute("userInfo") UserInfo user) {
+            @AuthenticationPrincipal UserInfo user) {
         return eventService.createEvent(eventCreateRequest, user);
     }
 }

@@ -40,6 +40,7 @@ public class JwtTokenProviderImpl implements com.skillbox.eventify.service.JwtTo
                 .compact();
     }
 
+    @Override
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
@@ -49,6 +50,7 @@ public class JwtTokenProviderImpl implements com.skillbox.eventify.service.JwtTo
         }
     }
 
+    @Override
     public String getUsername(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)

@@ -17,4 +17,9 @@ public class ConflictException extends RuntimeException implements BusinessExcep
     public HttpStatus getResponseCode() {
         return HttpStatus.CONFLICT;
     }
+
+    @Override
+    public String getCode() {
+        return "CONFLICT_ERROR";
+    }
 }

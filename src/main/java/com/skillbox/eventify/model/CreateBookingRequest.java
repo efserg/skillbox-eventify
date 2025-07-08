@@ -30,8 +30,5 @@ public class CreateBookingRequest implements Serializable {
     @JsonProperty("ticketCount")
     private Integer ticketCount;
 
-    public Long getEventId() {
-        return eventId;
-    }
 }
 

@@ -34,6 +34,10 @@ public class EventCreateRequest implements Serializable {
     @JsonProperty("description")
     private String description;
 
+    @Schema(name = "coverUrl", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty("coverUrl")
+    private String coverUrl;
+
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull
     @Valid

@@ -6,4 +6,8 @@ import java.util.List;
 public interface JwtTokenProvider {
 
     String createToken(User user);
+
+    boolean validateToken(String token);
+
+    String getUsername(String token);
 }

@@ -4,7 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileStorageService {
 
-    String storeFile(String folder, String filename, MultipartFile cover);
+    String storeFile(String filename, MultipartFile cover);
 
-    void deleteFile(String folder, String filename);
+    void deleteFile(String filename);
+
+    String downloadUrl(String coverUrl, String filename);
 }

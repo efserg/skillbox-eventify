@@ -1,18 +1,17 @@
 package com.skillbox.eventify.model;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.Instant;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @NoArgsConstructor
@@ -35,11 +34,16 @@ public class EventUpdateRequest implements Serializable {
     @Valid
     @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("dateTime")
-    private OffsetDateTime dateTime;
+    private Instant dateTime;
 
     @Min(1)
     @Schema(name = "totalTickets", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("totalTickets")
     private Integer totalTickets;
+
+    @Schema(name = "coverUrl", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty("coverUrl")
+    private String coverUrl;
+
 }
 

@@ -13,4 +13,6 @@ public interface BusinessException {
     Level getLevel();
     HttpStatus getResponseCode();
 
+    String getCode();
+
 }

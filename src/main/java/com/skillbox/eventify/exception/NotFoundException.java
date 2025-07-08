@@ -14,6 +14,11 @@ public abstract class NotFoundException extends RuntimeException implements Busi
         return HttpStatus.NOT_FOUND;
     }
 
+    @Override
+    public String getCode() {
+        return "ENTITY_NOT_FOUND";
+    }
+
     public NotFoundException() {
         super();
     }

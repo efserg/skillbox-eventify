@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202507081031-admin
+      author: skillbox_author
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: admin@admin.ru
+              - column:
+                  name: role
+                  value: ADMIN
+              - column:
+                  name: password
+                  value: $2a$10$IF.qeAsZp7Lx5iO3QtL5xe4zw1s.JPZ8Ki2KTDwTdoH4/UXCEhtOO
+
+  - changeSet:
+      id: 202507081031-user
+      author: skillbox_author
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: user@user.ru
+              - column:
+                  name: role
+                  value: USER
+              - column:
+                  name: password
+                  value: $2a$10$3lIMsjooDhzw6kjQd9A92u5BL8j7Ox1eri7vzJBX5g/lrVTwy6VHO

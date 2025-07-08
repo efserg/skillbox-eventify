@@ -5,11 +5,13 @@ import com.skillbox.eventify.exception.EventNotFoundException;
 import com.skillbox.eventify.exception.FileStorageException;
 import com.skillbox.eventify.exception.FileTooLargeException;
 import com.skillbox.eventify.exception.NoCoverException;
+import com.skillbox.eventify.exception.NumberValidateException;
 import com.skillbox.eventify.exception.WrongDateException;
 import com.skillbox.eventify.exception.WrongFileException;
 import com.skillbox.eventify.mapper.EventMapper;
 import com.skillbox.eventify.model.EventCreateRequest;
 import com.skillbox.eventify.model.EventResponse;
+import com.skillbox.eventify.model.EventUpdateRequest;
 import com.skillbox.eventify.model.UserInfo;
 import com.skillbox.eventify.repository.BookingRepository;
 import com.skillbox.eventify.repository.EventRepository;
@@ -21,6 +23,7 @@ import jakarta.persistence.criteria.Predicate;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.Stream.Builder;
 import lombok.RequiredArgsConstructor;
@@ -45,13 +48,6 @@ public class EventServiceImpl implements EventService {
     private final FileStorageService fileStorageService;
     private final EventMapper eventMapper;
 
-    private static final String EVENTS_COVERS_PATH = "events/covers";
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-    private static final List<String> ALLOWED_CONTENT_TYPES = List.of(
-            "image/jpeg",
-            "image/png"
-    );
-
     @Override
     @Transactional
     public EventResponse createEvent(EventCreateRequest request, UserInfo user) {
@@ -61,6 +57,9 @@ public class EventServiceImpl implements EventService {
         Event event = eventMapper.requestToEntity(request, user);
         try {
             Event savedEvent = eventRepository.save(event);
+            final String imageUrl = fileStorageService.downloadUrl(request.getCoverUrl(),
+                    String.valueOf(savedEvent.getId()));
+            event.setCoverPath(imageUrl);
             log.info("Создано новое мероприятие ID: {}", savedEvent.getId());
             return eventMapper.entityToResponse(savedEvent);
         } catch (DataIntegrityViolationException e) {
@@ -78,7 +77,7 @@ public class EventServiceImpl implements EventService {
             bookingRepository.deleteByEventId(eventId);
 
             if (event.getCoverPath() != null && !event.getCoverPath().isEmpty()) {
-                fileStorageService.deleteFile(EVENTS_COVERS_PATH, event.getCoverPath());
+                fileStorageService.deleteFile(event.getCoverPath());
             }
 
             eventRepository.delete(event);
@@ -96,23 +95,12 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventResponse uploadEventCover(Long eventId, MultipartFile coverFile) {
-        if (coverFile == null || coverFile.isEmpty()) {
-            throw new NoCoverException();
-        }
-        if (coverFile.getSize() > MAX_FILE_SIZE) {
-            throw new FileTooLargeException();
-        }
-        if (!ALLOWED_CONTENT_TYPES.contains(coverFile.getContentType())) {
-            throw new WrongFileException();
-        }
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(eventId));
 
         try {
-            String storedFileName = fileStorageService.storeFile(
-                    EVENTS_COVERS_PATH,
-                    eventId.toString(),
+            String storedFileName = fileStorageService.storeFile(eventId.toString(),
                     coverFile
             );
 
@@ -138,7 +126,7 @@ public class EventServiceImpl implements EventService {
         }
 
         try {
-            fileStorageService.deleteFile(EVENTS_COVERS_PATH, event.getCoverPath());
+            fileStorageService.deleteFile(event.getCoverPath());
 
             event.setCoverPath(null);
             eventRepository.save(event);
@@ -171,6 +159,45 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new EventNotFoundException(id));
         return eventMapper.entityToResponse(event);
 
+    }
+
+    @Override
+    @Transactional
+    public EventResponse update(Long id, EventUpdateRequest request) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException(id));
+
+        final String title = request.getTitle();
+        final Instant dateTime = request.getDateTime();
+        final String description = request.getDescription();
+        final Integer totalTickets = request.getTotalTickets();
+        final String coverUrl = request.getCoverUrl();
+
+        if (title != null && !Objects.equals(title, event.getTitle())) {
+            event.setTitle(title);
+        }
+        if (dateTime != null && !Objects.equals(dateTime, event.getDateTime())) {
+            event.setDateTime(dateTime);
+        }
+        if (!Objects.equals(description, event.getDescription())) {
+            event.setDescription(description);
+        }
+        if (totalTickets != null && !Objects.equals(totalTickets, event.getTotalTickets())) {
+            final Integer booked = bookingRepository.bookedCount(id);
+            if (booked > totalTickets) {
+                throw new NumberValidateException(
+                        "На мероприятие уже забронировано %s билетов, удалите брони или увеличьте количество билетов".formatted(
+                                booked));
+            }
+            event.setTotalTickets(totalTickets);
+        }
+        if (coverUrl == null) {
+            fileStorageService.deleteFile(String.valueOf(event.getId()));
+        } else {
+            final String coverPath = fileStorageService.downloadUrl(coverUrl, String.valueOf(event.getId()));
+            event.setCoverPath(coverPath);
+        }
+        return eventMapper.entityToResponse(event);
     }
 
     private Specification<Event> buildSpecification(Instant from,

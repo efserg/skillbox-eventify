@@ -13,6 +13,11 @@ public abstract class AuthException extends RuntimeException implements Business
         return HttpStatus.UNAUTHORIZED;
     }
 
+    @Override
+    public String getCode() {
+        return "AUTH_ERROR";
+    }
+
     public AuthException() {
         super();
     }

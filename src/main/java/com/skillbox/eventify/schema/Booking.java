@@ -3,6 +3,8 @@ package com.skillbox.eventify.schema;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +28,9 @@ import lombok.experimental.FieldNameConstants;
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @FieldNameConstants
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +57,10 @@ public class Booking {
     @Column(name = "expiry_time", nullable = false)
     @ToString.Include
     private Instant expiryTime;
+
+    @Column(name = "created_at", nullable = false)
+    @ToString.Include
+    private Instant createdAt;
 
     @Column(nullable = false)
     @ToString.Include

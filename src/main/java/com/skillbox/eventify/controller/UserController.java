@@ -1,8 +1,12 @@
 package com.skillbox.eventify.controller;
 
 import com.skillbox.eventify.model.ErrorResponse;
+import com.skillbox.eventify.model.UserInfo;
+import com.skillbox.eventify.service.NotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +27,11 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/user")
 @Validated
+@RequiredArgsConstructor
 @Tag(name = "User", description = "Настройки уведомлений пользователя")
 public class UserController {
+
+    private final NotificationService notificationService;
 
     @Operation(
             operationId = "userNotificationsDelete",
@@ -38,8 +45,8 @@ public class UserController {
             }
     )
     @DeleteMapping("/notifications")
-    public ResponseEntity<Void> userNotificationsDelete() {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public void userNotificationsDelete() {
+        return;
     }
 
     @Operation(
@@ -56,8 +63,8 @@ public class UserController {
             }
     )
     @GetMapping("/notifications")
-    public ResponseEntity<NotificationPreferences> userNotificationsGet() {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public NotificationPreferences userNotificationsGet() {
+        return null;
     }
 
     @Operation(
@@ -75,9 +82,9 @@ public class UserController {
             }
     )
     @PutMapping("/notifications")
-    public ResponseEntity<Void> userNotificationsPut(
+    public void userNotificationsPut(
             @Parameter(name = "NotificationPreferences", description = "") @Valid @RequestBody(required = false) NotificationPreferences notificationPreferences) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return;
     }
 
     @Operation(
@@ -94,7 +101,7 @@ public class UserController {
             }
     )
     @PostMapping(value = "/telegram/link", produces = {"text/plain"})
-    public ResponseEntity<String> userTelegramLinkPost() {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public String userTelegramLinkPost(@AuthenticationPrincipal UserInfo user) {
+        return notificationService.linkTelegram(user);
     }
 }

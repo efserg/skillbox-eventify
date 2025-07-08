@@ -7,6 +7,7 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +58,7 @@ public class BookingsController {
             }
     )
     @GetMapping
-    public List<BookingResponse> getAll(@RequestAttribute("userInfo") UserInfo user) {
+    public List<BookingResponse> getAll(@AuthenticationPrincipal UserInfo user) {
         return bookingService.findByUserId(user.getId());
     }
 
@@ -84,7 +85,7 @@ public class BookingsController {
     @DeleteMapping("/{id}")
     public void delete(
             @Parameter(name = "id", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id,
-            @RequestAttribute("userInfo") UserInfo user
+            @AuthenticationPrincipal UserInfo user
     ) {
         bookingService.cancelBooking(id, user);
     }
@@ -114,7 +115,8 @@ public class BookingsController {
     )
     @GetMapping("/{id}")
     public BookingResponse getById(
-            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id, @RequestAttribute("userInfo") UserInfo user
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id,
+            @AuthenticationPrincipal UserInfo user
     ) {
         return bookingService.getById(id, user);
     }
@@ -146,9 +148,10 @@ public class BookingsController {
     )
     @PutMapping("/{id}")
     public BookingResponse edit(
-            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id,
-            @Parameter(name = "BookingUpdateRequest", description = "") @Valid @RequestBody(required = false) UpdateBookingRequest bookingUpdateRequest, @RequestAttribute("userInfo") UserInfo user) {
-        throw new NotImplementedException();
+            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id,
+            @Parameter(name = "BookingUpdateRequest", description = "") @Valid @RequestBody(required = false) UpdateBookingRequest bookingUpdateRequest,
+            @AuthenticationPrincipal UserInfo user) {
+        return bookingService.update(id, bookingUpdateRequest, user);
     }
 
     @Operation(
@@ -179,7 +182,7 @@ public class BookingsController {
     @PostMapping
     public BookingResponse create(
             @Parameter(name = "CreateBookingRequest") @Valid @RequestBody(required = false) CreateBookingRequest createBookingRequest,
-            @RequestAttribute("userInfo") UserInfo user) {
+            @AuthenticationPrincipal UserInfo user) {
         return bookingService.createBooking(createBookingRequest, user);
     }
 }

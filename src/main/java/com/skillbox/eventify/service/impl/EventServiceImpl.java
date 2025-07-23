@@ -56,10 +56,9 @@ public class EventServiceImpl implements EventService {
         }
         Event event = eventMapper.requestToEntity(request, user);
         try {
+            // Сохраняем оригинальный URL изображения
+            event.setCoverPath(request.getCoverUrl());
             Event savedEvent = eventRepository.save(event);
-            final String imageUrl = fileStorageService.downloadUrl(request.getCoverUrl(),
-                    String.valueOf(savedEvent.getId()));
-            event.setCoverPath(imageUrl);
             log.info("Создано новое мероприятие ID: {}", savedEvent.getId());
             return eventMapper.entityToResponse(savedEvent);
         } catch (DataIntegrityViolationException e) {
@@ -75,20 +74,12 @@ public class EventServiceImpl implements EventService {
 
         try {
             bookingRepository.deleteByEventId(eventId);
-
-            if (event.getCoverPath() != null && !event.getCoverPath().isEmpty()) {
-                fileStorageService.deleteFile(event.getCoverPath());
-            }
-
             eventRepository.delete(event);
 
             log.info("Мероприятие {} и все связанные бронирования удалены администратором", eventId);
 
         } catch (DataAccessException e) {
             throw new ConflictException("Ошибка при удалении связанных данных: " + e.getMessage());
-        } catch (FileStorageException e) {
-            log.error("Ошибка при удалении файлов мероприятия {}: {}", eventId, e.getMessage());
-            throw new ConflictException("Ошибка при удалении файлов мероприятия");
         }
     }
 
@@ -125,16 +116,8 @@ public class EventServiceImpl implements EventService {
             throw new NoCoverException();
         }
 
-        try {
-            fileStorageService.deleteFile(event.getCoverPath());
-
-            event.setCoverPath(null);
-            eventRepository.save(event);
-
-        } catch (FileStorageException e) {
-            log.error("Ошибка при удалении файлов мероприятия {}: {}", eventId, e.getMessage());
-            throw new ConflictException("Ошибка при удалении файла: " + e.getMessage());
-        }
+        event.setCoverPath(null);
+        eventRepository.save(event);
     }
 
     @Override
@@ -192,10 +175,9 @@ public class EventServiceImpl implements EventService {
             event.setTotalTickets(totalTickets);
         }
         if (coverUrl == null) {
-            fileStorageService.deleteFile(String.valueOf(event.getId()));
+            event.setCoverPath(null);
         } else {
-            final String coverPath = fileStorageService.downloadUrl(coverUrl, String.valueOf(event.getId()));
-            event.setCoverPath(coverPath);
+            event.setCoverPath(coverUrl);
         }
         return eventMapper.entityToResponse(event);
     }

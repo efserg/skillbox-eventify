@@ -1043,7 +1043,7 @@ components:
         coverUrl:
           type: string
           description: URL обложки мероприятия
-          example: /uploads/events/1/cover.jpg
+          example: https://example.com/image.jpg
     EventUpdateRequest:
       type: object
       properties:

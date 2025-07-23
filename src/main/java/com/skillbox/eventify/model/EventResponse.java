@@ -50,7 +50,7 @@ public class EventResponse implements Serializable {
     @JsonProperty("availableTickets")
     private Integer availableTickets;
 
-    @Schema(name = "coverUrl", example = "/uploads/events/1/cover.jpg", description = "URL обложки мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "coverUrl", example = "https://example.com/image.jpg", description = "URL обложки мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("coverUrl")
     private String coverUrl;
 

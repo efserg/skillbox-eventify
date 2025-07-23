@@ -22,7 +22,7 @@ public abstract class EventMapper {
     @Autowired
     BookingRepository bookingRepository;
 
-    @Mapping(target = "coverUrl", expression = "java(event.getCoverPath() == null ? null : \"/images/\" + event.getCoverPath())")
+    @Mapping(target = "coverUrl", source = "coverPath")
     @Mapping(target = "availableTickets", qualifiedByName = "availableTickets", source = ".")
     public abstract EventResponse entityToResponse(Event event);
 
@@ -38,7 +38,7 @@ public abstract class EventMapper {
 
     @Mapping(target = "createdBy", expression = "java(User.builder().id(user.getId()).build())")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "coverPath", ignore = true)
+    @Mapping(target = "coverPath", source = "coverUrl")
     @Mapping(target = "bookings", ignore = true)
     public abstract Event requestToEntity(EventCreateRequest request, @Context UserInfo user);
 }

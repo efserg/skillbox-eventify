@@ -1,7 +1,6 @@
 package com.skillbox.eventify.schema;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

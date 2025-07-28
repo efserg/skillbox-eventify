@@ -45,7 +45,7 @@ public class UserController {
             }
     )
     @DeleteMapping("/notifications")
-    public void userNotificationsDelete() {
+    public void userNotificationsDelete(@AuthenticationPrincipal UserInfo user) {
         return;
     }
 
@@ -63,7 +63,7 @@ public class UserController {
             }
     )
     @GetMapping("/notifications")
-    public NotificationPreferences userNotificationsGet() {
+    public NotificationPreferences userNotificationsGet(@AuthenticationPrincipal UserInfo user) {
         return null;
     }
 
@@ -83,7 +83,7 @@ public class UserController {
     )
     @PutMapping("/notifications")
     public void userNotificationsPut(
-            @Parameter(name = "NotificationPreferences", description = "") @Valid @RequestBody(required = false) NotificationPreferences notificationPreferences) {
+            @Parameter(name = "NotificationPreferences", description = "") @Valid @RequestBody(required = false) NotificationPreferences notificationPreferences, @AuthenticationPrincipal UserInfo user) {
         return;
     }
 

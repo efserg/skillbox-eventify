@@ -151,6 +151,53 @@ databaseChangeLog:
                   constraints:
                     checkConstraint: "notify_before_hours BETWEEN 1 AND 24"
 
+        - createTable:
+            tableName: telegram_links
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_telegram_link_user
+                    references: users(id)
+                    deleteCascade: true
+
+              - column:
+                  name: verification_code
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: expires_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: idx_telegram_link_user_id
+            tableName: telegram_links
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+            unique: true
+
   - changeSet:
       id: 202505111256-02
       author: skillbox_author

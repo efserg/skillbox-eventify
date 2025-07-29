@@ -7,10 +7,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.skillbox.eventify.exception.InvalidVerificationCodeException;
+import com.skillbox.eventify.exception.NotificationPreferenceNotFoundException;
 import com.skillbox.eventify.exception.VerificationCodeExpiredException;
+import com.skillbox.eventify.mapper.NotificationPreferenceMapper;
+import com.skillbox.eventify.model.NotificationPreferences;
 import com.skillbox.eventify.model.UserInfo;
+import com.skillbox.eventify.repository.NotificationRepository;
 import com.skillbox.eventify.repository.TelegramLinkRepository;
 import com.skillbox.eventify.repository.UserRepository;
+import com.skillbox.eventify.schema.NotificationPreference;
 import com.skillbox.eventify.schema.TelegramLink;
 import com.skillbox.eventify.schema.TelegramLinkStatus;
 import com.skillbox.eventify.schema.User;
@@ -26,7 +31,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final CodeGenerator codeGenerator;
     private final TelegramLinkRepository telegramLinkRepository;
+    private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final NotificationPreferenceMapper preferenceMapper;
 
     @Override
     @Transactional
@@ -64,5 +71,38 @@ public class NotificationServiceImpl implements NotificationService {
 
         link.setStatus(TelegramLinkStatus.CONFIRMED);
         telegramLinkRepository.save(link);
+    }
+
+    @Override
+    public NotificationPreferences getNotificationPreferences(UserInfo user) {
+        NotificationPreference preference = notificationRepository.findByUserId(user.getId()).orElse(null);
+        return preferenceMapper.entityToResponse(preference);
+    }
+
+    @Override
+    @Transactional
+    public void deleteNotificationPreferences(UserInfo user) {
+        NotificationPreference preference = notificationRepository.findByUserId(user.getId()).orElseThrow(NotificationPreferenceNotFoundException::new);
+        notificationRepository.delete(preference);
+    }
+
+    @Override
+    public NotificationPreferences createOrUpdateNotification(NotificationPreferences preferences, UserInfo user) {
+        NotificationPreference entity = notificationRepository.findByUserId(user.getId())
+                .orElse(preferenceMapper.requestToEntity(preferences, user));
+
+        if (preferences.getNotifyNewEvents() != null) {
+            entity.setNotifyBeforeHours(preferences.getNotifyBeforeHours());
+        }
+        if (preferences.getNotifyNewEvents() != null) {
+            entity.setNotifyNewEvents(preferences.getNotifyNewEvents());
+        }
+        if (preferences.getNotifyUpcoming() != null) {
+            entity.setNotifyUpcoming(preferences.getNotifyUpcoming());
+        }
+
+        final NotificationPreference saved = notificationRepository.save(entity);
+
+        return preferenceMapper.entityToResponse(saved);
     }
 }

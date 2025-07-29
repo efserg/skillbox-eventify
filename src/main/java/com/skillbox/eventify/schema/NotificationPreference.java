@@ -28,11 +28,6 @@ public class NotificationPreference {
     @EqualsAndHashCode.Include
     private Long userId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(name = "notify_new_events", nullable = false)
     @ToString.Include
     private Boolean notifyNewEvents = false;

@@ -3,7 +3,6 @@ package com.skillbox.eventify.model;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +18,7 @@ import jakarta.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Запрос на создание мероприятия")
 public class EventCreateRequest implements Serializable {
 
     @Serial
@@ -26,28 +26,28 @@ public class EventCreateRequest implements Serializable {
 
     @NotNull
     @Size(max = 100)
-    @Schema(name = "title", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "title", description = "Название мероприятия", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("title")
     private String title;
 
-    @Schema(name = "description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "description", description = "Описание мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("description")
     private String description;
 
-    @Schema(name = "coverUrl", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "coverUrl", description = "URL обложки мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("coverUrl")
     private String coverUrl;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull
     @Valid
-    @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "dateTime", description = "Дата и время мероприятия", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("dateTime")
     private Instant dateTime;
 
     @NotNull
     @Min(1)
-    @Schema(name = "totalTickets", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "totalTickets", description = "Общее число мест на мероприятие", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("totalTickets")
     private Integer totalTickets;
 }

@@ -1,9 +1,7 @@
 package com.skillbox.eventify.model;
 
-import com.skillbox.eventify.exception.BusinessException.Level;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -15,6 +13,7 @@ import lombok.Singular;
 import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.skillbox.eventify.exception.BusinessException.Level;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema(description = "Сообщение о произошедшей ошибке")
 public class ErrorResponse implements Serializable {
 
     @Serial

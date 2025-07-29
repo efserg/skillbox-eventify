@@ -1,11 +1,6 @@
 package com.skillbox.eventify.controller;
 
-import com.skillbox.eventify.model.ErrorResponse;
-import com.skillbox.eventify.model.UserInfo;
-import com.skillbox.eventify.service.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +10,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.skillbox.eventify.model.ErrorResponse;
 import com.skillbox.eventify.model.NotificationPreferences;
+import com.skillbox.eventify.model.UserInfo;
+import com.skillbox.eventify.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,7 +44,7 @@ public class UserController {
     )
     @DeleteMapping("/notifications")
     public void userNotificationsDelete(@AuthenticationPrincipal UserInfo user) {
-        return;
+        notificationService.deleteNotificationPreferences(user);
     }
 
     @Operation(
@@ -64,7 +62,7 @@ public class UserController {
     )
     @GetMapping("/notifications")
     public NotificationPreferences userNotificationsGet(@AuthenticationPrincipal UserInfo user) {
-        return null;
+        return notificationService.getNotificationPreferences(user);
     }
 
     @Operation(
@@ -72,7 +70,9 @@ public class UserController {
             summary = "Обновить настройки уведомлений",
             tags = {"User"},
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Настройки обновлены"),
+                    @ApiResponse(responseCode = "200", description = "Настройки обновлены", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = NotificationPreferences.class))
+                    }),
                     @ApiResponse(responseCode = "401", description = "Не авторизован", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                     }),
@@ -82,9 +82,9 @@ public class UserController {
             }
     )
     @PutMapping("/notifications")
-    public void userNotificationsPut(
-            @Parameter(name = "NotificationPreferences", description = "") @Valid @RequestBody(required = false) NotificationPreferences notificationPreferences, @AuthenticationPrincipal UserInfo user) {
-        return;
+    public NotificationPreferences userNotificationsPut(
+            @Parameter(name = "NotificationPreferences") @Valid @RequestBody(required = false) NotificationPreferences notificationPreferences, @AuthenticationPrincipal UserInfo user) {
+        return notificationService.createOrUpdateNotification(notificationPreferences, user);
     }
 
     @Operation(

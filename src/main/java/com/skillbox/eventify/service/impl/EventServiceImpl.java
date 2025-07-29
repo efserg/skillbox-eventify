@@ -1,13 +1,24 @@
 package com.skillbox.eventify.service.impl;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.Objects;
+import java.util.stream.Stream;
+import java.util.stream.Stream.Builder;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.skillbox.eventify.exception.ConflictException;
 import com.skillbox.eventify.exception.EventNotFoundException;
-import com.skillbox.eventify.exception.FileStorageException;
-import com.skillbox.eventify.exception.FileTooLargeException;
-import com.skillbox.eventify.exception.NoCoverException;
 import com.skillbox.eventify.exception.NumberValidateException;
 import com.skillbox.eventify.exception.WrongDateException;
-import com.skillbox.eventify.exception.WrongFileException;
 import com.skillbox.eventify.mapper.EventMapper;
 import com.skillbox.eventify.model.EventCreateRequest;
 import com.skillbox.eventify.model.EventResponse;
@@ -18,24 +29,7 @@ import com.skillbox.eventify.repository.EventRepository;
 import com.skillbox.eventify.schema.Event;
 import com.skillbox.eventify.schema.Event.Fields;
 import com.skillbox.eventify.service.EventService;
-import com.skillbox.eventify.service.FileStorageService;
 import jakarta.persistence.criteria.Predicate;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
-import java.util.stream.Stream.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +39,6 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final BookingRepository bookingRepository;
-    private final FileStorageService fileStorageService;
     private final EventMapper eventMapper;
 
     @Override
@@ -81,43 +74,6 @@ public class EventServiceImpl implements EventService {
         } catch (DataAccessException e) {
             throw new ConflictException("Ошибка при удалении связанных данных: " + e.getMessage());
         }
-    }
-
-    @Override
-    @Transactional
-    public EventResponse uploadEventCover(Long eventId, MultipartFile coverFile) {
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException(eventId));
-
-        try {
-            String storedFileName = fileStorageService.storeFile(eventId.toString(),
-                    coverFile
-            );
-
-            event.setCoverPath(storedFileName);
-            Event savedEvent = eventRepository.save(event);
-
-            return eventMapper.entityToResponse(savedEvent);
-
-        } catch (FileStorageException e) {
-            log.error("Ошибка при удалении файлов мероприятия {}: {}", eventId, e.getMessage());
-            throw new ConflictException("Ошибка при сохранении файла: " + e.getMessage());
-        }
-    }
-
-    @Override
-    @Transactional
-    public void deleteEventCover(Long eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException(eventId));
-
-        if (event.getCoverPath() == null || event.getCoverPath().isEmpty()) {
-            throw new NoCoverException();
-        }
-
-        event.setCoverPath(null);
-        eventRepository.save(event);
     }
 
     @Override
@@ -174,11 +130,7 @@ public class EventServiceImpl implements EventService {
             }
             event.setTotalTickets(totalTickets);
         }
-        if (coverUrl == null) {
-            event.setCoverPath(null);
-        } else {
-            event.setCoverPath(coverUrl);
-        }
+        event.setCoverPath(coverUrl);
         return eventMapper.entityToResponse(event);
     }
 

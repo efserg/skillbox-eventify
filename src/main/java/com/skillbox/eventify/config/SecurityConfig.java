@@ -1,6 +1,7 @@
 package com.skillbox.eventify.config;
 
 import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -67,8 +68,7 @@ public class SecurityConfig {
                                 "/auth/register",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/images/**"
+                                "/v3/api-docs/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().hasAnyRole("USER", "ADMIN")

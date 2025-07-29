@@ -13,16 +13,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Сведения о произошедшей ошибке")
 public class ErrorDetail implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(name = "field", example = "email", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "field", description = "Поле, которое содержит ошибку", example = "email", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("field")
     private String field;
 
-    @Schema(name = "message", example = "Должен быть валидным email адресом", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "message", description = "Описание ошибки", example = "Должен быть валидным email адресом", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("message")
     private String message;
 }

@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Запрос на создание нового пользователя")
 public class RegisterRequest implements Serializable {
 
     @Serial
@@ -22,13 +23,13 @@ public class RegisterRequest implements Serializable {
 
     @NotNull
     @Email
-    @Schema(name = "email", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "email", description = "Электронная почта пользователя", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("email")
     private String email;
 
     @NotNull
     @Size(min = 8)
-    @Schema(name = "password", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "password", description = "Пароль", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("password")
     private String password;
 

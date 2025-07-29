@@ -3,9 +3,8 @@ package com.skillbox.eventify.model;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,34 +18,35 @@ import jakarta.validation.Valid;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Сведения о мероприятии")
 public class EventResponse implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "id", description = "Идентификатор мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("id")
     private Long id;
 
-    @Schema(name = "title", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "title", description = "Название мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("title")
     private String title;
 
-    @Schema(name = "description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "description", description = "Описание мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("description")
     private String description;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Valid
-    @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "dateTime", description = "Дата и время начала мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("dateTime")
     private Instant dateTime;
 
-    @Schema(name = "totalTickets", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "totalTickets", description = "Общее число мест на мероприятие", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("totalTickets")
     private Integer totalTickets;
 
-    @Schema(name = "availableTickets", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "availableTickets", description = "Число мест, доступных к бронированию", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("availableTickets")
     private Integer availableTickets;
 

@@ -1,10 +1,8 @@
 package com.skillbox.eventify.controller;
 
-import com.skillbox.eventify.service.EventService;
 import java.time.OffsetDateTime;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.skillbox.eventify.model.ErrorResponse;
 import com.skillbox.eventify.model.EventResponse;
+import com.skillbox.eventify.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

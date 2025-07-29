@@ -5,27 +5,27 @@ import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Ответ на запрос авторизации")
 public class AuthResponse implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(name = "token", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "token", description = "Токен авторизации", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("token")
     private String token;
 
-    @Schema(name = "role", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "role", description = "Роль пользователя", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("role")
     private RoleEnum role;
 

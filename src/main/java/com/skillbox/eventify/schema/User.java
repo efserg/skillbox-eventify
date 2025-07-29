@@ -63,9 +63,6 @@ public class User {
     @ToString.Include
     private ZoneId timezone;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private NotificationPreference notificationPreference;
-
     public enum Role {
         USER, ADMIN
     }

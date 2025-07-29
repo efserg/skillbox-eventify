@@ -1,13 +1,13 @@
 package com.skillbox.eventify.service;
 
-import com.skillbox.eventify.model.CreateBookingRequest;
-import com.skillbox.eventify.model.UpdateBookingRequest;
-import com.skillbox.eventify.model.UserInfo;
-import jakarta.validation.Valid;
 import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.skillbox.eventify.model.BookingResponse;
+import com.skillbox.eventify.model.CreateBookingRequest;
+import com.skillbox.eventify.model.UpdateBookingRequest;
+import com.skillbox.eventify.model.UserInfo;
 
 public interface BookingService {
     Page<BookingResponse> findAll(Long eventId, Boolean unconfirmedOnly, Pageable pageable);

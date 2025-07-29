@@ -1,14 +1,12 @@
 package com.skillbox.eventify.service.impl;
 
-import com.skillbox.eventify.model.UserInfo;
-import com.skillbox.eventify.repository.UserRepository;
-import com.skillbox.eventify.schema.User;
-import com.skillbox.eventify.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import com.skillbox.eventify.model.UserInfo;
+import com.skillbox.eventify.repository.UserRepository;
+import com.skillbox.eventify.schema.User;
 
 @Service
 @RequiredArgsConstructor

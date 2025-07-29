@@ -16,32 +16,33 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Запрос на изменение сведений о мероприятии")
 public class EventUpdateRequest implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Size(max = 100)
-    @Schema(name = "title", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "title", description = "Название мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("title")
     private String title;
 
-    @Schema(name = "description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "description", description = "Описание мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("description")
     private String description;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Valid
-    @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "dateTime", description = "Дата и время начала мероприятия", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("dateTime")
     private Instant dateTime;
 
     @Min(1)
-    @Schema(name = "totalTickets", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "totalTickets", description = "Общее число мест на мероприятие", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("totalTickets")
     private Integer totalTickets;
 
-    @Schema(name = "coverUrl", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(name = "coverUrl", description = "URL обложки", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("coverUrl")
     private String coverUrl;
 

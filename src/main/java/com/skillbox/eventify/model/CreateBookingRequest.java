@@ -14,19 +14,20 @@ import jakarta.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Запрос на создание бронирования")
 public class CreateBookingRequest implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @NotNull
-    @Schema(name = "eventId", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "eventId", description = "Идентификатор мероприятия", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("eventId")
     private Long eventId;
 
     @NotNull
     @Min(1)
-    @Schema(name = "ticketCount", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "ticketCount", description = "Количество билетов", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("ticketCount")
     private Integer ticketCount;
 

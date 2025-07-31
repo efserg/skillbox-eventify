@@ -67,6 +67,10 @@ public class Event {
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
+    @Column(name = "created_at", nullable = false)
+    @ToString.Include
+    private Instant createdAt;
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 }

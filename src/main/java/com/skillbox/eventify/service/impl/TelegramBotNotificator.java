@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import com.skillbox.eventify.service.NotificationService;
 
 @Component
@@ -36,6 +38,17 @@ public class TelegramBotNotificator extends TelegramLongPollingBot {
                 String code = update.getMessage().getText().split("\\s+")[1];
                 notificationService.confirmLink(update.getMessage().getChatId(), code);
             }
+        }
+    }
+
+    public void sendNotification(Long chatId, String text) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId.toString());
+        message.setText(text);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            System.err.println("Ошибка отправки в Telegram: " + e.getMessage());
         }
     }
 

@@ -2,8 +2,11 @@ package com.skillbox.eventify.service.impl;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.skillbox.eventify.exception.InvalidVerificationCodeException;
@@ -12,9 +15,11 @@ import com.skillbox.eventify.exception.VerificationCodeExpiredException;
 import com.skillbox.eventify.mapper.NotificationPreferenceMapper;
 import com.skillbox.eventify.model.NotificationPreferences;
 import com.skillbox.eventify.model.UserInfo;
+import com.skillbox.eventify.repository.EventRepository;
 import com.skillbox.eventify.repository.NotificationRepository;
 import com.skillbox.eventify.repository.TelegramLinkRepository;
 import com.skillbox.eventify.repository.UserRepository;
+import com.skillbox.eventify.schema.Event;
 import com.skillbox.eventify.schema.NotificationPreference;
 import com.skillbox.eventify.schema.TelegramLink;
 import com.skillbox.eventify.schema.TelegramLinkStatus;
@@ -34,6 +39,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final NotificationPreferenceMapper preferenceMapper;
+    private final EventRepository eventRepository;
+    private final TelegramBotNotificator botNotificator;
 
     @Override
     @Transactional
@@ -104,5 +111,48 @@ public class NotificationServiceImpl implements NotificationService {
         final NotificationPreference saved = notificationRepository.save(entity);
 
         return preferenceMapper.entityToResponse(saved);
+    }
+
+
+    @Scheduled(cron = "0 59 * * * *")
+    public void checkAndSendNotifications() {
+        Instant now = Instant.now();
+        List<User> users = userRepository.findAllWithNotificationPreferences();
+
+        for (User user : users) {
+            NotificationPreference prefs = user.getNotificationPreference();
+            Long chatId = user.getTelegramChatId();
+            notifyNewEvents(prefs, now, chatId);
+            notifyUserBookings(user, prefs, now, chatId);
+        }
+    }
+
+    private void notifyUserBookings(User user, NotificationPreference prefs, Instant now, Long chatId) {
+        if (prefs.getNotifyUpcoming()) {
+            List<Event> upcomingEvents = eventRepository.findUpcomingEventsForUser(
+                    user.getId(), now,
+                    now.plus(prefs.getNotifyBeforeHours(), ChronoUnit.HOURS)
+            );
+            if (!upcomingEvents.isEmpty()) {
+                String message = "Напоминание о мероприятиях:\n" +
+                        upcomingEvents.stream()
+                                .map(e -> "- " + e.getTitle() + " (через " + prefs.getNotifyBeforeHours() + " ч)")
+                                .collect(Collectors.joining("\n"));
+                botNotificator.sendNotification(chatId, message);
+            }
+        }
+    }
+
+    private void notifyNewEvents(NotificationPreference prefs, Instant now, Long chatId) {
+        if (prefs.getNotifyNewEvents()) {
+            List<Event> newEvents = eventRepository.findNewEventsSince(now.minus(1, ChronoUnit.HOURS));
+            if (!newEvents.isEmpty()) {
+                String message = "Новые мероприятия:\n" +
+                        newEvents.stream()
+                                .map(e -> "- " + e.getTitle() + " (" + e.getDateTime() + ")")
+                                .collect(Collectors.joining("\n"));
+                botNotificator.sendNotification(chatId, message);
+            }
+        }
     }
 }
